@@ -1,13 +1,14 @@
+"use client";
+
 import React from 'react';
 import './StoryList.css';
 
 const stories = [
   {
     id: 1,
-    title: "L'Aventure Émotionnelle",
-    text: "Un jour, un petit robot était très content de découvrir un nouveau monde. Soudain, il fut surpris par un papillon magnifique. Le robot, joyeux, suivit le papillon dans les airs. C'était vraiment incroyable !",
-    videoUrl: "/videos/aventure_emotionnelle.mp4",
-    icon: "🦋"
+    title: "Le Grand Voyage de QT",
+    text: "Un jour tranquille, QT se préparait pour une nouvelle aventure. Il était très calme en vérifiant sa liste de voyage. Soudain, un bruit étrange retentit derrière lui ! QT fut surpris et eut un peu peur. Mais en se retournant, il découvrit que c'était son meilleur ami Robot-X qui lui préparait une fête surprise ! QT était tellement joyeux de voir tous ses amis réunis. Malheureusement, Robot-X lui annonça qu'il devait partir pour une longue mission, ce qui rendit QT très triste. Mais sa tristesse se transforma vite en colère quand il apprit que Robot-X partait sans lui dire au revoir ! Heureusement, Robot-X expliqua que c'était une blague et qu'il restait. QT retrouva sa joie et tout le monde fit la fête ensemble !",
+    icon: "🤖"
   },
   {
     id: 2,

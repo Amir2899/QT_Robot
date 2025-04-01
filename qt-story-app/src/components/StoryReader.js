@@ -1,4 +1,6 @@
-import React, { useState, useRef } from 'react';
+"use client";
+
+import React, { useState, useRef, useEffect } from 'react';
 import QTAvatar from './QTAvatar';
 import StoryList from './StoryList';
 import './StoryReader.css';
@@ -6,71 +8,90 @@ import './StoryReader.css';
 const StoryReader = () => {
   const [currentStory, setCurrentStory] = useState(null);
   const [speaking, setSpeaking] = useState(false);
-  const [emotion, setEmotion] = useState("idle");
+  const [emotion, setEmotion] = useState("emotif");
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const videoRef = useRef(null);
   const synth = window.speechSynthesis;
 
   const emotionalWords = {
-    happy: ["joyeux", "content", "heureux", "rire", "sourire", "amusant"],
-    surprised: ["surpris", "étonné", "wow", "incroyable", "soudain", "extraordinaire"],
-    idle: ["normal", "calme", "tranquille"]
+    joie: ["joyeux", "content", "heureux", "rire", "sourire", "amusant", "joie"],
+    surprise: ["surpris", "étonné", "wow", "incroyable", "soudain", "extraordinaire", "surprise"],
+    colere: ["colère", "énervé", "furieux", "rage", "fâché", "agacé"],
+    tristesse: ["triste", "seul", "malheureux", "déçu", "peine", "chagrin"],
+    emotif: ["émotif", "sensible", "touché", "ému", "sentiment"]
   };
 
   const detectEmotionInPhrase = (text) => {
+    let maxScore = 0;
+    let detectedEmotion = "emotif";
+
     for (const [emotion, words] of Object.entries(emotionalWords)) {
-      if (words.some(word => text.toLowerCase().includes(word))) {
-        return emotion;
+      const score = words.reduce((count, word) => {
+        return count + (text.toLowerCase().includes(word.toLowerCase()) ? 1 : 0);
+      }, 0);
+
+      if (score > maxScore) {
+        maxScore = score;
+        detectedEmotion = emotion;
       }
     }
-    return "idle";
+
+    console.log(`Texte analysé: "${text}"`);
+    console.log(`Émotion détectée: ${detectedEmotion}`);
+    return detectedEmotion;
   };
 
   const handleStopReading = () => {
     synth.cancel();
     setSpeaking(false);
-    setEmotion("idle");
+    setEmotion("emotif");
+    setCurrentSentenceIndex(0);
   };
 
   const handleReadStory = (story) => {
-    // Arrêter la lecture précédente si elle existe
     handleStopReading();
-
     setCurrentStory(story);
     setSpeaking(true);
-    setEmotion("idle");
+    setEmotion("emotif");
+    setCurrentSentenceIndex(0);
 
-    if (story.videoUrl) {
-      if (videoRef.current) {
-        videoRef.current.src = story.videoUrl;
-        videoRef.current.play();
-      }
-    } else {
-      // Diviser le texte en phrases pour la détection d'émotion
-      const sentences = story.text.split(/[.!?]+/).filter(Boolean);
-      let currentIndex = 0;
+    // Diviser l'histoire en phrases
+    const sentences = story.text
+      .split(/([.!?]+)/)
+      .reduce((acc, current, i, arr) => {
+        if (i % 2 === 0) {
+          return acc.concat(current + (arr[i + 1] || ""));
+        }
+        return acc;
+      }, [])
+      .filter(sentence => sentence.trim().length > 0);
 
-      const utterance = new SpeechSynthesisUtterance(story.text);
+    console.log("Phrases détectées:", sentences);
+
+    // Créer un utterance pour chaque phrase
+    sentences.forEach((sentence, index) => {
+      const utterance = new SpeechSynthesisUtterance(sentence);
       utterance.lang = "fr-FR";
       utterance.rate = 0.9;
       utterance.pitch = 1.1;
 
-      // Détecter les émotions pendant la lecture
-      utterance.onboundary = (event) => {
-        if (event.name === 'sentence') {
-          const currentSentence = sentences[currentIndex];
-          const detectedEmotion = detectEmotionInPhrase(currentSentence);
-          setEmotion(detectedEmotion);
-          currentIndex = (currentIndex + 1) % sentences.length;
-        }
+      utterance.onstart = () => {
+        setCurrentSentenceIndex(index);
+        const emotion = detectEmotionInPhrase(sentence);
+        setEmotion(emotion);
+        console.log(`Lecture de la phrase ${index + 1}/${sentences.length}: "${sentence}"`);
       };
 
       utterance.onend = () => {
-        setSpeaking(false);
-        setEmotion("idle");
+        if (index === sentences.length - 1) {
+          setSpeaking(false);
+          setEmotion("emotif");
+          setCurrentSentenceIndex(0);
+        }
       };
 
       synth.speak(utterance);
-    }
+    });
   };
 
   return (
@@ -97,28 +118,15 @@ const StoryReader = () => {
           <h2 className="content-title">Nos Histoires</h2>
           <StoryList onSelectStory={handleReadStory} />
           
-          {currentStory && currentStory.videoUrl ? (
-            <div className="video-container">
-              <h3 className="video-title">{currentStory.title}</h3>
-              <video
-                ref={videoRef}
-                className="story-video"
-                controls
-                onPlay={() => setSpeaking(true)}
-                onPause={() => setSpeaking(false)}
-                onEnded={() => {
-                  setSpeaking(false);
-                  setEmotion("idle");
-                }}
-              >
-                <source src={currentStory.videoUrl} type="video/mp4" />
-                Votre navigateur ne supporte pas la lecture de vidéos.
-              </video>
-            </div>
-          ) : currentStory && (
+          {currentStory && (
             <div className="story-text-container">
               <h3>{currentStory.title}</h3>
               <p>{currentStory.text}</p>
+              {speaking && (
+                <div className="reading-progress">
+                  Phrase en cours: {currentSentenceIndex + 1}
+                </div>
+              )}
             </div>
           )}
         </div>
