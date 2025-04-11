@@ -13,7 +13,16 @@ const QTAvatar = ({ speaking, emotion }) => {
     colere: 'qt_colere.mp4',
     tristesse: 'qt_tristesse.mp4',
     surprise: 'qt_surprise.mp4',
-    emotif: 'qt_émotif.mp4'
+    emotif: 'qt_emotif.mp4',
+    pleur: 'qt_pleur.mp4',
+    mecontent: 'qt_mecontent.mp4',
+    farceur: 'qt_farceur.mp4',
+    etonne: 'qt_etonne.mp4',
+    degouter: 'qt_degouter.mp4',
+    anxiete: 'qt_anxiete.mp4',
+    clindoeil: 'qt_clindoeil.mp4',
+    crie: 'qt_crie.mp4',
+    raconte: 'qt_raconte.mp4'
   };
 
   const getVideoPath = () => {
@@ -50,12 +59,19 @@ const QTAvatar = ({ speaking, emotion }) => {
   const getEmotionText = () => {
     const emotionTexts = {
       joie: '😊 Je suis joyeux !',
-      peur: '😨 J\'ai peur...',
       colere: '😠 Je suis en colère !',
       tristesse: '😢 Je suis triste',
       surprise: '😲 Je suis surpris !',
-      neutre: '😌 Je suis calme',
-      emotif: '🎭 Je suis émotif !'
+      emotif: '🎭 Je suis émotif !',
+      pleur: '😭 Je pleure',
+      mecontent: '😤 Je suis mécontent',
+      farceur: '😏 Je suis farceur',
+      etonne: '😯 Je suis étonné',
+      degouter: '🤢 Je suis dégoûté',
+      anxiete: '😰 Je suis anxieux',
+      clindoeil: '😉 Je fais un clin d\'œil',
+      crie: '📢 Je crie !',
+      raconte: '📖 Je raconte une histoire'
     };
     return emotionTexts[emotion] || emotionTexts.emotif;
   };
