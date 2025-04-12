@@ -1,3 +1,76 @@
+# QT Story App
+
+Une application Next.js pour QT Robot qui permet de raconter des histoires interactives.
+
+## Structure du Projet
+
+```
+qt-story-app/
+├── app/
+│   ├── api/                  # Routes API
+│   ├── components/          # Composants React réutilisables
+│   │   ├── stories/        # Composants liés aux histoires
+│   │   └── ui/            # Composants d'interface utilisateur
+│   ├── hooks/              # Custom hooks React
+│   ├── styles/             # Fichiers CSS et styles
+│   │   └── globals.css
+│   ├── utils/              # Fonctions utilitaires
+│   ├── ml/                 # Code lié au machine learning
+│   ├── layout.js          # Layout principal
+│   └── page.js            # Page principale
+├── public/
+│   ├── assets/            # Images, vidéos, sons
+│   │   ├── images/
+│   │   ├── videos/
+│   │   └── sounds/
+│   └── locales/           # Fichiers de traduction
+├── tests/                 # Tests unitaires et d'intégration
+├── package.json
+└── README.md
+```
+
+## Installation
+
+```bash
+npm install
+```
+
+## Développement
+
+```bash
+npm run dev
+```
+
+## Tests
+
+```bash
+npm test           # Exécuter les tests
+npm run test:watch # Exécuter les tests en mode watch
+```
+
+## Build et Déploiement
+
+```bash
+npm run build  # Construire l'application
+npm start      # Démarrer en mode production
+```
+
+## Fonctionnalités
+
+- Interface interactive pour raconter des histoires
+- Intégration avec QT Robot
+- Traitement du langage naturel pour une meilleure interaction
+- Interface utilisateur moderne et responsive
+- Support multilingue
+- Gestion des médias (images, vidéos, sons)
+
+## Technologies Utilisées
+
+- Next.js
+- React
+- Hugging Face Transformers
+- Framer Motion pour les animations
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

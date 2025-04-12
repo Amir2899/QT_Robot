@@ -1,6 +1,6 @@
 "use client";
 
-import StoryReader from '../src/components/StoryReader';
+import StoryReader from './components/stories/StoryReader';
 
 export default function Home() {
   return (
