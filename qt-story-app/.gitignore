@@ -31,3 +31,17 @@ yarn-error.log*
 
 # Système
 Thumbs.db
+
+# Next.js build output
+.next/
+
+# Vercel deployment folder
+.vercel/
+
+# Pages ou src si générés automatiquement (à vérifier)
+# (Uniquement si ce ne sont pas tes fichiers sources)
+# /pages/
+/src/
+
+# Autres dossiers build/serveur
+out/
