@@ -5,6 +5,13 @@ import QTAvatar from './QTAvatar';
 import StoryList from './StoryList';
 import './StoryReader.css';
 
+const storyImages = {
+  "Le Grand Voyage de QT": "/images/qt-robot.png",
+  "La Fête Surprise": "/images/party.png",
+  "Une Journée Spéciale": "/images/special-day.png",
+  "Le Loup Émotif": "/images/wolf.png"
+};
+
 const StoryReader = () => {
   const [currentStory, setCurrentStory] = useState(null);
   const [speaking, setSpeaking] = useState(false);
@@ -12,10 +19,13 @@ const StoryReader = () => {
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [lastEmotionChangeTime, setLastEmotionChangeTime] = useState(0);
   const [isEmotionSequence, setIsEmotionSequence] = useState(false);
+  const [displayedSentences, setDisplayedSentences] = useState([]);
+  const [currentProgress, setCurrentProgress] = useState(0);
   const videoRef = useRef(null);
   const [synth, setSynth] = useState(null);
-  const MIN_EMOTION_DURATION = 3000; // Durée minimale d'une émotion en millisecondes
-  const QUICK_EMOTION_DURATION = 800; // Durée pour les séquences rapides
+  const MIN_EMOTION_DURATION = 3000;
+  const QUICK_EMOTION_DURATION = 800;
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -209,14 +219,14 @@ const StoryReader = () => {
     setCurrentSentenceIndex(0);
     setLastEmotionChangeTime(Date.now());
     setIsEmotionSequence(false);
+    setDisplayedSentences([]);
+    setCurrentProgress(0);
 
-    // Diviser l'histoire en phrases plus longues pour les émotions
     const sentences = story.text
       .split(/([.!?]+)/)
       .reduce((acc, current, i, arr) => {
         if (i % 2 === 0) {
           const sentence = current + (arr[i + 1] || "");
-          // Ne divise que les très longues phrases
           if (sentence.length > 150) {
             return acc.concat(sentence.split(/[,;]/).map(s => s.trim() + ','));
           }
@@ -228,14 +238,12 @@ const StoryReader = () => {
 
     console.log("Phrases détectées:", sentences);
 
-    // Créer un utterance pour chaque phrase
     sentences.forEach((sentence, index) => {
       const utterance = new SpeechSynthesisUtterance(sentence);
       utterance.lang = "fr-FR";
-      utterance.rate = 0.80; // Ralentir un peu plus la lecture pour une meilleure synchronisation
+      utterance.rate = 0.80;
       utterance.pitch = 1.1;
 
-      // Analyser le contexte plus large
       const previousSentence = sentences[index - 1] || "";
       const nextSentence = sentences[index + 1] || "";
       const contextText = previousSentence + " " + sentence + " " + nextSentence;
@@ -244,9 +252,14 @@ const StoryReader = () => {
 
       utterance.onstart = () => {
         setCurrentSentenceIndex(index);
+        setDisplayedSentences(prev => [...prev, sentence]);
+        setCurrentProgress((index + 1) / sentences.length * 100);
+        
+        if (scrollRef.current) {
+          scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
         
         if (currentEmotion === "sequence") {
-          // Démarrer immédiatement la séquence
           handleEmotionSequence(["joie", "colere", "tristesse", "surprise"], utterance);
         } else {
           const currentTime = Date.now();
@@ -272,6 +285,13 @@ const StoryReader = () => {
     });
   };
 
+  const handleReturnToStories = () => {
+    handleStopReading();
+    setCurrentStory(null);
+    setDisplayedSentences([]);
+    setCurrentProgress(0);
+  };
+
   return (
     <div className="story-reader-container">
       <div className="story-reader-header">
@@ -280,34 +300,73 @@ const StoryReader = () => {
       </div>
 
       <div className="story-reader-main">
-        <div className="story-reader-avatar">
-          <QTAvatar speaking={speaking} emotion={emotion} />
-          {speaking && (
-            <button 
-              onClick={handleStopReading}
-              className="stop-button"
-            >
-              Arrêter la lecture
-            </button>
-          )}
-        </div>
+        {!currentStory ? (
+          <div className="story-selection-layout">
+            <div className="welcome-avatar">
+              <QTAvatar speaking={false} emotion="raconte" />
+              <div className="welcome-message">
+                <h3>Bonjour ! Je suis QT Robot</h3>
+                <p>Je suis ravi de te raconter une histoire ! Choisis celle que tu préfères !</p>
+              </div>
+            </div>
+            <div className="story-selection">
+              <h2 className="content-title">Choisis ton histoire préférée</h2>
+              <StoryList onSelectStory={handleReadStory} />
+            </div>
+          </div>
+        ) : (
+          <div className="story-reading-layout">
+            <div className="story-left-column">
+              <div className="qt-avatar-container">
+                <QTAvatar speaking={speaking} emotion={emotion} />
+              </div>
+              <div className="story-controls">
+                <button 
+                  onClick={handleReturnToStories}
+                  className="control-button choose-story-button"
+                >
+                  Choisir une autre histoire
+                </button>
+                {speaking && (
+                  <button 
+                    onClick={handleStopReading}
+                    className="control-button stop-button"
+                  >
+                    Arrêter la lecture
+                  </button>
+                )}
+              </div>
+            </div>
 
-        <div className="story-reader-content">
-          <h2 className="content-title">Nos Histoires</h2>
-          <StoryList onSelectStory={handleReadStory} />
-          
-          {currentStory && (
-            <div className="story-text-container">
-              <h3>{currentStory.title}</h3>
-              <p>{currentStory.text}</p>
-              {speaking && (
-                <div className="reading-progress">
-                  Phrase en cours: {currentSentenceIndex + 1}
+            <div className="story-right-column">
+              {storyImages[currentStory.title] && (
+                <div className="story-image-container">
+                  <img 
+                    src={storyImages[currentStory.title]}
+                    alt={`Illustration pour ${currentStory.title}`}
+                    className="story-image"
+                  />
                 </div>
               )}
+              <div className="current-sentence-container">
+                <div className="story-progress-bar">
+                  <div 
+                    className="progress-fill"
+                    style={{ width: `${currentProgress}%` }}
+                  />
+                </div>
+                <div className="current-sentence">
+                  {displayedSentences[currentSentenceIndex]}
+                </div>
+                {speaking && (
+                  <div className="reading-progress">
+                    Phrase {currentSentenceIndex + 1} sur {currentStory.text.split(/[.!?]+/).filter(s => s.trim()).length}
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

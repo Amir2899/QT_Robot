@@ -1,4 +1,4 @@
-// File: /home/idriguene/qt-story-app/app/layout.js
+// File: /home/imen/Bureau/QTStorryApp/QTRobotv5/QT_Robot/app/layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
