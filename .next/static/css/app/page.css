@@ -219,72 +219,125 @@
 /*!********************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ../../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!../../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./app/components/stories/StoryReader.css ***!
   \********************************************************************************************************************************************************************************************************************************************************************************************/
-/* Animations magiques */
+/* ============================
+   ANIMATIONS GLOBALES
+   ============================ */
 @keyframes floatingStars {
+  /* Départ : position initiale */
   0% { transform: translateY(0px); }
+  /* Milieu : monte de 20px */
   50% { transform: translateY(-20px); }
+  /* Retour à la position initiale */
   100% { transform: translateY(0px); }
 }
 
 @keyframes twinkle {
+  /* Début et fin : totalement visible */
   0%, 100% { opacity: 1; }
+  /* Milieu : presque transparent */
   50% { opacity: 0.3; }
 }
 
 @keyframes gradientBG {
+  /* Position de départ du dégradé */
   0% { background-position: 0% 50%; }
+  /* Position médiane du dégradé */
   50% { background-position: 100% 50%; }
+  /* Retour à la position initiale */
   100% { background-position: 0% 50%; }
 }
 
+/* ============================
+   CONTENEUR PRINCIPAL
+   ============================ */
 .story-reader-container {
+  /* Largeur maximale du conteneur */
   max-width: 1200px;
+  /* Centrage horizontal */
   margin: 0 auto;
+  /* Espacement interne */
   padding: 2rem;
+  /* Hauteur minimale égale à la hauteur de la fenêtre */
   min-height: 100vh;
+  /* Fond dégradé animé avec 4 couleurs */
   background: linear-gradient(-45deg, #1a237e, #4a148c, #311b92, #0d47a1);
+  /* Taille du fond pour l'animation */
   background-size: 400% 400%;
+  /* Application de l'animation du fond */
   animation: gradientBG 15s ease infinite;
+  /* Police de caractères */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* Positionnement relatif pour les éléments enfants */
   position: relative;
+  /* Cache tout ce qui dépasse */
   overflow: hidden;
 }
 
-/* Étoiles et éléments magiques */
+/* ============================
+   EFFET D'ÉTOILES EN ARRIÈRE-PLAN
+   ============================ */
 .story-reader-container::before {
+  /* Élément vide pour l'effet */
   content: '';
+  /* Position fixe pour rester en arrière-plan */
   position: fixed;
+  /* Couvre tout l'écran */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  /* Création des étoiles avec des points colorés */
   background-image: 
+    /* Étoile dorée */
     radial-gradient(2px 2px at 20px 30px, #ffd700 100%, transparent),
+    /* Étoile cyan */
     radial-gradient(3px 3px at 40px 70px, #00ffff 100%, transparent),
+    /* Étoile rose */
     radial-gradient(2px 2px at 50px 160px, #ff4081 100%, transparent),
+    /* Étoile verte */
     radial-gradient(4px 4px at 90px 40px, #76ff03 100%, transparent),
+    /* Étoile rose clair */
     radial-gradient(3px 3px at 130px 80px, #f06292 100%, transparent);
+  /* Répétition du motif */
   background-repeat: repeat;
+  /* Animation de scintillement */
   animation: twinkle 4s infinite;
+  /* Semi-transparent */
   opacity: 0.6;
+  /* Au-dessus du fond */
   z-index: 1;
 }
 
+/* ============================
+   EN-TÊTE DE L'APPLICATION
+   ============================ */
 .story-reader-header {
+  /* Centrage du texte */
   text-align: center;
+  /* Espacement en bas */
   margin-bottom: 3rem;
+  /* Espacement interne */
   padding: 3rem 2rem;
+  /* Fond dégradé semi-transparent */
   background: linear-gradient(135deg, rgba(63, 81, 181, 0.9) 0%, rgba(103, 58, 183, 0.9) 100%);
+  /* Coins arrondis */
   border-radius: 30px;
+  /* Texte blanc */
   color: #ffffff;
+  /* Ombre portée double */
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3),
               0 0 20px rgba(255, 255, 255, 0.2);
+  /* Position relative pour les décorations */
   position: relative;
+  /* Cache les dépassements */
   overflow: hidden;
+  /* Bordure semi-transparente */
   border: 4px solid rgba(255, 255, 255, 0.2);
+  /* Effet de flou sur l'arrière-plan */
   backdrop-filter: blur(10px);
 }
 
+/* Éléments décoratifs de l'en-tête */
 .story-reader-header::after {
   content: '🌟';
   position: absolute;
@@ -304,6 +357,7 @@
   animation-delay: 1.5s;
 }
 
+/* Styles du titre principal */
 .story-reader-header h1 {
   font-size: 3rem;
   font-weight: 800;
@@ -316,6 +370,7 @@
   z-index: 2;
 }
 
+/* Sous-titre de l'en-tête */
 .story-reader-header p {
   font-size: 1.4rem;
   color: #ffffff;
@@ -324,6 +379,9 @@
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
+/* ============================
+   MISE EN PAGE PRINCIPALE
+   ============================ */
 .story-reader-main {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -333,6 +391,9 @@
   z-index: 2;
 }
 
+/* ============================
+   SECTION AVATAR DU ROBOT
+   ============================ */
 .story-reader-avatar {
   position: sticky;
   top: 2rem;
@@ -347,6 +408,10 @@
   backdrop-filter: blur(10px);
 }
 
+/* ============================
+   BOUTONS DE CONTRÔLE
+   ============================ */
+/* Bouton d'arrêt */
 .stop-button {
   background: linear-gradient(45deg, #f44336, #ff5252);
   color: white;
@@ -367,6 +432,241 @@
   background: linear-gradient(45deg, #ff5252, #f44336);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
+}
+
+/* ============================
+   CONTENEUR DE L'HISTOIRE
+   ============================ */
+.story-reading-layout {
+  /* Disposition en grille */
+  display: grid;
+  /* Colonne robot (400px) et colonne contenu */
+  grid-template-columns: 400px 1fr;
+  /* Espacement entre colonnes */
+  gap: 2.5rem;
+  /* Largeur maximale */
+  max-width: 1400px;
+  /* Centrage horizontal */
+  margin: 0 auto;
+  /* Espacement externe */
+  padding: 2rem;
+}
+
+/* Colonne gauche (Robot) */
+.story-left-column {
+  /* Disposition en colonne */
+  display: flex;
+  flex-direction: column;
+  /* Espacement entre éléments */
+  gap: 2rem;
+  width: 100%;
+}
+
+/* Colonne droite (Contenu) */
+.story-right-column {
+  /* Disposition en colonne */
+  display: flex;
+  flex-direction: column;
+  /* Espacement entre éléments */
+  gap: 2rem;
+  width: 100%;
+  /* Alignement des éléments */
+  justify-content: space-between;
+  /* Hauteur minimale pour aligner avec la colonne gauche */
+  min-height: 700px;
+}
+
+/* Conteneur de l'image */
+.story-image-container {
+  /* Dimensions fixes */
+  height: 300px;
+  width: 400px;
+  /* Centrage horizontal */
+  margin: 0 auto;
+  /* Autres styles inchangés */
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* Conteneur de la phrase courante */
+.current-sentence-container {
+  /* Position en bas */
+  margin-top: auto;
+  /* Dimensions fixes */
+  height: 200px;
+  width: 600px;
+  /* Centrage horizontal */
+  margin-left: auto;
+  margin-right: auto;
+  /* Autres styles inchangés */
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Ajustement pour les écrans plus petits */
+@media (max-width: 768px) {
+  .story-right-column {
+    min-height: auto;
+    gap: 1.5rem;
+  }
+
+  .story-image-container {
+    width: 300px;
+    height: 250px;
+  }
+
+  .current-sentence-container {
+    width: 90%;
+    height: 180px;
+    margin-top: 1rem;
+  }
+}
+
+/* Ajustement pour les très petits écrans */
+@media (max-width: 480px) {
+  .story-image-container {
+    width: 250px;
+    height: 200px;
+  }
+
+  .current-sentence-container {
+    width: 95%;
+    height: 150px;
+  }
+}
+
+/* ============================
+   BARRE DE PROGRESSION
+   ============================ */
+.story-progress {
+  width: 100%;
+  padding: 10px 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.control-button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.play-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pause-button {
+  background-color: #FFA000;
+  color: white;
+}
+
+.stop-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.choose-story-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.control-button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.control-button:active {
+  transform: scale(0.95);
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+   ============================ */
+@media (max-width: 1440px) {
+  /* Ajustements pour les grands écrans */
+  .story-reading-layout {
+    /* Réduction de la largeur de la colonne du robot */
+    grid-template-columns: 350px 1fr;
+    /* Limitation de la largeur maximale */
+    max-width: 1200px;
+  }
+  
+  .qt-avatar-container {
+    /* Réduction de la hauteur du conteneur du robot */
+    height: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* Ajustements pour les tablettes */
+  .story-reading-layout {
+    /* Passage en une seule colonne */
+    grid-template-columns: 1fr;
+    /* Espacement entre les éléments */
+    gap: 2rem;
+  }
+
+  .qt-avatar-container {
+    /* Réduction supplémentaire de la hauteur */
+    height: 300px;
+  }
+}
+
+/* ============================
+   ANIMATIONS DES IMAGES
+   ============================ */
+@keyframes fadeImage {
+  /* État initial de l'image */
+  from {
+    /* Invisible */
+    opacity: 0;
+    /* Légèrement réduite */
+    transform: scale(0.95);
+  }
+  /* État final de l'image */
+  to {
+    /* Totalement visible */
+    opacity: 1;
+    /* Taille normale */
+    transform: scale(1);
+  }
+}
+
+/* Application de l'animation aux images */
+.story-image-container img {
+  /* Animation de fondu */
+  animation: fadeImage 0.5s ease-out;
 }
 
 .content-title {
@@ -524,49 +824,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transform: scale(1.02);
   font-weight: 500;
-}
-
-.story-progress-bar {
-  width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  margin: 1rem 0;
-  overflow: hidden;
-  position: relative;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4a148c, #7c4dff);
-  border-radius: 4px;
-  transition: width 0.3s ease;
-  position: relative;
-}
-
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
 }
 
 /* Personnalisation de la barre de défilement */
@@ -778,38 +1035,6 @@
   justify-content: center;
 }
 
-/* Styles pour la vue de lecture */
-.story-reading-layout {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-  display: grid;
-  grid-template-columns: 600px 1fr;
-  gap: 2.5rem;
-}
-
-.story-left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%;
-}
-
-.qt-avatar-container {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 2rem;
-  border-radius: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  height: 500px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
 .story-controls {
   background: rgba(255, 255, 255, 0.15);
   padding: 1.5rem;
@@ -825,40 +1050,6 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  width: 100%;
-}
-
-.story-image-container {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 1.5rem;
-  border-radius: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  height: 500px;
-  width: 100%;
-}
-
-.story-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.current-sentence-container {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 2rem;
-  border-radius: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  min-height: 250px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   width: 100%;
 }
 
@@ -917,13 +1108,12 @@
 
 @media (max-width: 1440px) {
   .story-reading-layout {
-    grid-template-columns: 500px 1fr;
+    grid-template-columns: 350px 1fr;
     max-width: 1200px;
   }
   
-  .qt-avatar-container,
-  .story-image-container {
-    height: 450px;
+  .qt-avatar-container {
+    height: 350px;
   }
 }
 
@@ -933,9 +1123,8 @@
     gap: 2rem;
   }
 
-  .qt-avatar-container,
-  .story-image-container {
-    height: 400px;
+  .qt-avatar-container {
+    height: 300px;
   }
 }
 

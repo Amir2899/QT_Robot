@@ -15,12 +15,16 @@ const storyImages = {
 const StoryReader = () => {
   const [currentStory, setCurrentStory] = useState(null);
   const [speaking, setSpeaking] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [emotion, setEmotion] = useState("raconte");
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [lastEmotionChangeTime, setLastEmotionChangeTime] = useState(0);
   const [isEmotionSequence, setIsEmotionSequence] = useState(false);
   const [displayedSentences, setDisplayedSentences] = useState([]);
   const [currentProgress, setCurrentProgress] = useState(0);
+  const [currentImage, setCurrentImage] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageSequence, setImageSequence] = useState([]);
   const videoRef = useRef(null);
   const [synth, setSynth] = useState(null);
   const MIN_EMOTION_DURATION = 3000;
@@ -29,9 +33,43 @@ const StoryReader = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setSynth(window.speechSynthesis);
+      const synthesis = window.speechSynthesis;
+      setSynth(synthesis);
+
+      // Gestionnaire d'événements pour la synthèse vocale
+      const handleSpeechEvent = (event) => {
+        if (event.type === 'pause') {
+          setSpeaking(false);
+          setPaused(true);
+        } else if (event.type === 'resume') {
+          setSpeaking(true);
+          setPaused(false);
+        } else if (event.type === 'end') {
+          setSpeaking(false);
+          setPaused(false);
+        }
+      };
+
+      synthesis.addEventListener('pause', handleSpeechEvent);
+      synthesis.addEventListener('resume', handleSpeechEvent);
+      synthesis.addEventListener('end', handleSpeechEvent);
+
+      return () => {
+        synthesis.removeEventListener('pause', handleSpeechEvent);
+        synthesis.removeEventListener('resume', handleSpeechEvent);
+        synthesis.removeEventListener('end', handleSpeechEvent);
+      };
     }
   }, []);
+
+  // Effet pour gérer les changements d'image
+  useEffect(() => {
+    if (imageSequence.length > 0 && currentImageIndex >= 0 && currentImageIndex < imageSequence.length) {
+      const newImage = imageSequence[currentImageIndex];
+      console.log("Mise à jour de l'image:", newImage);
+      setCurrentImage(newImage);
+    }
+  }, [currentImageIndex, imageSequence]);
 
   const emotionalWords = {
     joie: [
@@ -200,89 +238,144 @@ const StoryReader = () => {
     return detectedEmotion;
   };
 
+  const handlePauseResume = () => {
+    if (!synth) return;
+
+    console.log("État actuel - Pause:", paused, "Speaking:", speaking);
+
+    try {
+      if (paused) {
+        console.log("Reprise de la lecture");
+        synth.resume();
+      } else {
+        console.log("Mise en pause de la lecture");
+        synth.pause();
+      }
+    } catch (error) {
+      console.error("Erreur lors de la pause/reprise:", error);
+    }
+  };
+
   const handleStopReading = () => {
-    if (synth) {
+    if (!synth) return;
+
+    try {
       synth.cancel();
       setSpeaking(false);
+      setPaused(false);
       setEmotion("emotif");
       setCurrentSentenceIndex(0);
+      console.log("Lecture arrêtée");
+    } catch (error) {
+      console.error("Erreur lors de l'arrêt:", error);
     }
   };
 
   const handleReadStory = (story) => {
     if (!synth) return;
     
-    handleStopReading();
-    setCurrentStory(story);
-    setSpeaking(true);
-    setEmotion("raconte");
-    setCurrentSentenceIndex(0);
-    setLastEmotionChangeTime(Date.now());
-    setIsEmotionSequence(false);
-    setDisplayedSentences([]);
-    setCurrentProgress(0);
+    try {
+      handleStopReading();
+      setCurrentStory(story);
+      setSpeaking(true);
+      setPaused(false);
+      setEmotion("raconte");
+      setCurrentSentenceIndex(0);
+      setLastEmotionChangeTime(Date.now());
+      setIsEmotionSequence(false);
+      setDisplayedSentences([]);
+      setCurrentProgress(0);
 
-    const sentences = story.text
-      .split(/([.!?]+)/)
-      .reduce((acc, current, i, arr) => {
-        if (i % 2 === 0) {
-          const sentence = current + (arr[i + 1] || "");
-          if (sentence.length > 150) {
-            return acc.concat(sentence.split(/[,;]/).map(s => s.trim() + ','));
-          }
-          return acc.concat(sentence);
-        }
-        return acc;
-      }, [])
-      .filter(sentence => sentence.trim().length > 0);
-
-    console.log("Phrases détectées:", sentences);
-
-    sentences.forEach((sentence, index) => {
-      const utterance = new SpeechSynthesisUtterance(sentence);
-      utterance.lang = "fr-FR";
-      utterance.rate = 0.80;
-      utterance.pitch = 1.1;
-
-      const previousSentence = sentences[index - 1] || "";
-      const nextSentence = sentences[index + 1] || "";
-      const contextText = previousSentence + " " + sentence + " " + nextSentence;
+      console.log("Démarrage de la lecture de l'histoire:", story.title);
       
-      const currentEmotion = detectEmotionInPhrase(contextText);
+      // Définir l'image initiale
+      const defaultImage = storyImages[story.title];
+      const initialImage = defaultImage;
+      setCurrentImage(initialImage);
+      console.log("Image initiale définie:", initialImage);
 
-      utterance.onstart = () => {
-        setCurrentSentenceIndex(index);
-        setDisplayedSentences(prev => [...prev, sentence]);
-        setCurrentProgress((index + 1) / sentences.length * 100);
-        
-        if (scrollRef.current) {
-          scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }
-        
-        if (currentEmotion === "sequence") {
-          handleEmotionSequence(["joie", "colere", "tristesse", "surprise"], utterance);
-        } else {
-          const currentTime = Date.now();
-          if (currentTime - lastEmotionChangeTime >= MIN_EMOTION_DURATION) {
-            setEmotion(currentEmotion);
+      // Séparer le texte en segments (phrases et marqueurs d'image)
+      const segments = story.text.split(/(\[CHANGE_IMAGE:[^\]]+\])/);
+      console.log("Segments détectés:", segments);
+      
+      let sentences = [];
+      let currentUtterances = [];
+      let imageChangeIndices = new Map(); // Utiliser une Map pour stocker les indices et les images
+      
+      segments.forEach((segment, segmentIndex) => {
+        if (segment.startsWith('[CHANGE_IMAGE:')) {
+          const imageName = segment.match(/\[CHANGE_IMAGE:([^\]]+)\]/)[1];
+          console.log("Marqueur d'image trouvé:", imageName);
+          if (story.images && story.images[imageName]) {
+            imageChangeIndices.set(sentences.length, story.images[imageName]);
+            console.log("Image associée à l'index:", sentences.length, "image:", story.images[imageName]);
+          }
+        } else if (segment.trim()) {
+          // Diviser le segment en phrases
+          const phraseSegments = segment.split(/([.!?]+)/).filter(s => s.trim());
+          for (let i = 0; i < phraseSegments.length; i += 2) {
+            const content = (phraseSegments[i] + (phraseSegments[i + 1] || '')).trim();
+            if (content) {
+              sentences.push({ type: 'text', content });
+            }
           }
         }
-        
-        console.log(`Lecture de la phrase ${index + 1}/${sentences.length}: "${sentence}"`);
-        console.log(`Émotion actuelle: ${currentEmotion}`);
-      };
+      });
 
-      utterance.onend = () => {
-        if (index === sentences.length - 1) {
-          setSpeaking(false);
-          setEmotion("emotif");
-          setCurrentSentenceIndex(0);
-          setIsEmotionSequence(false);
-        }
-      };
+      console.log("Indices de changement d'image:", Array.from(imageChangeIndices.entries()));
+      setDisplayedSentences(sentences);
 
-      synth.speak(utterance);
-    });
+      // Créer et enchaîner les utterances
+      sentences.forEach((item, index) => {
+        const utterance = new SpeechSynthesisUtterance(item.content);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.80;
+        utterance.pitch = 1.1;
+
+        utterance.onstart = () => {
+          setCurrentSentenceIndex(index);
+          setCurrentProgress((index + 1) / sentences.length * 100);
+
+          // Vérifier si nous devons changer d'image à cet index
+          if (imageChangeIndices.has(index)) {
+            const newImage = imageChangeIndices.get(index);
+            console.log("Changement d'image à l'index:", index, "nouvelle image:", newImage);
+            setCurrentImage(newImage);
+          }
+
+          const previousContent = sentences[index - 1]?.content || '';
+          const nextContent = sentences[index + 1]?.content || '';
+          const contextText = previousContent + " " + item.content + " " + nextContent;
+          
+          const currentEmotion = detectEmotionInPhrase(contextText);
+          if (currentEmotion && currentEmotion !== emotion) {
+            const now = Date.now();
+            if (now - lastEmotionChangeTime >= MIN_EMOTION_DURATION) {
+              setEmotion(currentEmotion);
+              setLastEmotionChangeTime(now);
+            }
+          }
+        };
+
+        utterance.onend = () => {
+          if (index === sentences.length - 1) {
+            setSpeaking(false);
+            setEmotion("emotif");
+            setCurrentSentenceIndex(0);
+            setIsEmotionSequence(false);
+          }
+        };
+
+        currentUtterances.push(utterance);
+      });
+
+      // Jouer toutes les utterances en séquence
+      currentUtterances.forEach(utterance => {
+        synth.speak(utterance);
+      });
+    } catch (error) {
+      console.error("Erreur lors de la lecture de l'histoire:", error);
+    }
   };
 
   const handleReturnToStories = () => {
@@ -327,42 +420,51 @@ const StoryReader = () => {
                 >
                   Choisir une autre histoire
                 </button>
-                {speaking && (
-                  <button 
-                    onClick={handleStopReading}
-                    className="control-button stop-button"
-                  >
-                    Arrêter la lecture
-                  </button>
-                )}
+                {speaking || paused ? (
+                  <>
+                    <button 
+                      onClick={handlePauseResume}
+                      className={`control-button ${paused ? 'play-button' : 'pause-button'}`}
+                    >
+                      {paused ? 'Reprendre' : 'Pause'}
+                    </button>
+                    <button 
+                      onClick={handleStopReading}
+                      className="control-button stop-button"
+                    >
+                      Arrêter la lecture
+                    </button>
+                  </>
+                ) : null}
               </div>
             </div>
 
             <div className="story-right-column">
-              {storyImages[currentStory.title] && (
-                <div className="story-image-container">
-                  <img 
-                    src={storyImages[currentStory.title]}
-                    alt={`Illustration pour ${currentStory.title}`}
-                    className="story-image"
-                  />
-                </div>
-              )}
+              <div className="story-image-container">
+                <img 
+                  src={currentImage || (currentStory?.images ? Object.values(currentStory.images)[0] : storyImages[currentStory?.title])}
+                  alt={`Illustration pour ${currentStory?.title}`}
+                  className="story-image"
+                  onError={(e) => {
+                    console.error("Erreur de chargement de l'image:", e.target.src);
+                    e.target.src = storyImages[currentStory?.title] || '';
+                  }}
+                />
+              </div>
               <div className="current-sentence-container">
-                <div className="story-progress-bar">
-                  <div 
-                    className="progress-fill"
-                    style={{ width: `${currentProgress}%` }}
-                  />
+                <div className="story-progress">
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill"
+                      style={{ width: `${currentProgress}%` }}
+                    />
+                  </div>
                 </div>
                 <div className="current-sentence">
-                  {displayedSentences[currentSentenceIndex]}
+                  {displayedSentences[currentSentenceIndex]?.type === 'text' 
+                    ? displayedSentences[currentSentenceIndex].content 
+                    : ''}
                 </div>
-                {speaking && (
-                  <div className="reading-progress">
-                    Phrase {currentSentenceIndex + 1} sur {currentStory.text.split(/[.!?]+/).filter(s => s.trim()).length}
-                  </div>
-                )}
               </div>
             </div>
           </div>

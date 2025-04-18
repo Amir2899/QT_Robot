@@ -29,12 +29,14 @@ const stories = [
     title: "Le Loup Émotif",
     text: `Il était une fois un loup qui vivait dans une belle forêt, entouré de tous ses amis. Il s'appelait Loup.
 Mais ce loup avait un souci : il était trop émotif. Joyeux,     fâché,    triste,     excité… il changeait d'humeur à cent à l'heure !
-Ainsi, quand Loup était d'humeur joyeuse, il sifflotait, le cœur léger, faisait des blagues, parlait aux arbres… Il était plein d'énergie et débordait d'idées pour s'amuser !
+Ainsi, quand Loup était d'humeur joyeuse, il sifflotait, le cœur léger, faisait des blagues, parlait aux arbres… 
+Il était plein d'énergie et débordait d'idées pour s'amuser !
 Cependant, si quelque chose le contrariait… Ah ! Il se renfrognait, explosait, et envoyait tout le monde balader !
 — Tu dois apprendre à te calmer, Loup, lui dit un jour Maître Hibou, excédé. Tu nous donnes le tournis !
 — Apprendre à me calmer ? Mais pourquoi ? demanda Loup.
 — Pour être plus serein ! Mais ne t'inquiète pas, nous allons t'aider… On commence demain !
 
+[CHANGE_IMAGE:Wolf2]
 Le lendemain, Loup se rendit chez son ami.
 — Pour contrôler tes émotions, le yoga, c'est parfait ! déclara Maître Hibou. Respire calmement et fais le vide en toi.
 Maître Hibou enchaîna les positions : lotus, montagne… et Loup essaya de l'imiter. Ouh là là ! Ce n'était pas facile, mais qu'est-ce que c'était rigolo ! N'y tenant plus, Loup éclata de rire.
@@ -52,6 +54,7 @@ Loup prit une grande inspiration et, tout tremblant, il redescendit.
 — Tu as vaincu ta peur, tu peux être fier de toi ! le félicita Alfred.
 Loup sourit : ah ça oui, il était fier de lui !
 
+[CHANGE_IMAGE:Wolf3]
 Tout ceci m'a mis en appétit, se dit Loup. Cela tombait bien : Gros Louis l'attendait chez lui.
 Les pattes pleines de farine, Gros Louis était avec Louve dans la cuisine.
 — Ils ont l'air de bien s'amuser tous les deux…, pensa Loup, jaloux.
@@ -74,7 +77,11 @@ Tout honteux, Loup retourna frapper à la porte de Gros Louis.
 Loup et Louve se regardèrent, des cœurs plein les yeux. Loup leva ses pattes : il se sentait léger, léger, léger ! Et… il était affamé !
 
 À table, mes amis, les macarons sont prêts !`,
-    icon: "🐺"
+    icon: "🐺",
+    images: {
+        Wolf2: "/images/Wolf2.jpg",
+        Wolf3: "/images/Wolf3.jpg"
+    }
   }
 ];
 
