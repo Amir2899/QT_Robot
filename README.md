@@ -7,7 +7,7 @@ pour lire des histoires aux enfants de 3 à 5 ans. Ce projet a été réalisé d
  et intègre des technologies modernes pour une expérience immersive.
 
 L'application est hébergée sur Vercel et accessible à l'adresse suivante :
-https://qt-robot-8n58phtl2-iafa-robot.vercel.app
+[https://qt-robot-8n58phtl2-iafa-robot.vercel.app](https://qtrobot-git-main-qtrobot-iafa.vercel.app)
 
 ------------------------------ Installation et exécution en local ------------------------------
 
