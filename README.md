@@ -1,143 +1,87 @@
-# QT Story App
+# QT_Robot
 
-Une application Next.js pour QT Robot qui permet de raconter des histoires interactives.
+-------------------------------------- Description --------------------------------------
 
-## Structure du Projet
+QT_Robot est une application web développée en Next.js qui propose un avatar robotique interactif 
+pour lire des histoires aux enfants de 3 à 5 ans. Ce projet a été réalisé dans le cadre d'un projet universitaire
+ et intègre des technologies modernes pour une expérience immersive.
 
-```
-qt-story-app/
-├── app/
-│   ├── api/                  # Routes API
-│   ├── components/          # Composants React réutilisables
-│   │   ├── stories/        # Composants liés aux histoires
-│   │   └── ui/            # Composants d'interface utilisateur
-│   ├── hooks/              # Custom hooks React
-│   ├── styles/             # Fichiers CSS et styles
-│   │   └── globals.css
-│   ├── utils/              # Fonctions utilitaires
-│   ├── ml/                 # Code lié au machine learning
-│   ├── layout.js          # Layout principal
-│   └── page.js            # Page principale
-├── public/
-│   ├── assets/            # Images, vidéos, sons
-│   │   ├── images/
-│   │   ├── videos/
-│   │   └── sounds/
-│   └── locales/           # Fichiers de traduction
-├── tests/                 # Tests unitaires et d'intégration
-├── package.json
-└── README.md
-```
+L'application est hébergée sur Vercel et accessible à l'adresse suivante :
+https://qt-robot-8n58phtl2-iafa-robot.vercel.app
 
-## Installation
+------------------------------ Installation et exécution en local ------------------------------
 
-```bash
-npm install
-```
+Avant d'installer et d'exécuter l'application en local, assurez-vous d'avoir les outils suivants installés sur votre système :
 
-## Développement
+    1. Prérequis:
 
-```bash
-npm run dev
-```
+        - Installation de Node.js:
 
-## Tests
+                - Téléchargez depuis l'adresse: https://nodejs.org/en/download.
 
-```bash
-npm test           # Exécuter les tests
-npm run test:watch # Exécuter les tests en mode watch
-```
+                - Installez en suivant les instructions.
 
-## Build et Déploiement
+                - Vérifiez l'installation en executant les commandes suivantes:
+                    node -v
+                    npm -v
+                La dernière version installée doit s'afficher.
 
-```bash
-npm run build  # Construire l'application
-npm start      # Démarrer en mode production
-```
+        - Installation de Git:
 
-## Fonctionnalités
+            - Téléchargez depuis l'adresse: https://git-scm.com/downloads
 
-- Interface interactive pour raconter des histoires
-- Intégration avec QT Robot
-- Traitement du langage naturel pour une meilleure interaction
-- Interface utilisateur moderne et responsive
-- Support multilingue
-- Gestion des médias (images, vidéos, sons)
+            - Installez en suivant les instructions.
 
-## Technologies Utilisées
+            - Vérifiez l'installation en executant les commandes suivantes:
+                git --version
+            La dernière version installée doit s'afficher.
 
-- Next.js
-- React
-- Hugging Face Transformers
-- Framer Motion pour les animations
+    2. Cloner le projet:
+        - Exécutez la commande dans un terminal:
+            git clone https://github.com/Amir2899/QT_Robot.git
 
-# Getting Started with Create React App
+        - Déplacez vous dans le dossier contenant le projet:
+            cd NOM_DOSSIER
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+    3. Installer les dépendances:
+        - Installez les modules nécessaires en exécutant la commande suivante:
+            npm install
 
-## Available Scripts
+    4. Lancer l'application en mode développement:
+        - Démarrez le serveur local avec la commande suivante:
+            npm run dev
+        - L'application sera alors accessible sur http://localhost:3000.
 
-In the project directory, you can run:
+    5. Construire et lancer en mode production:
+        npm run build
+        npm start
 
-### `npm start`
+---------------------------------- Déploiement sur Vercel -----------------------------------
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Le projet est configuré pour un déploiement facile avec Vercel.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+    1. Installer Vercel CLI avec la commande:
+        npm install -g vercel
 
-### `npm test`
+    2. Connectez-vous à Vercel (si nécessaire):
+        vercel login
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    3. Puis déployez l'application:
+        vercel --prod
+    
+----------------------------------- Technologies utilisées -----------------------------------
 
-### `npm run build`
+Next.js - Framework React pour les applications web
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Vercel - Hébergement et déploiement
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+LuxAI QT Robot - Intégration d’un avatar interactif
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+----------------------------------- Contact et distribution -----------------------------------
 
-### `npm run eject`
+Si vous avez des questions, vous pouvez contacter les développeurs: 
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Imene ZEGHBID: imene.zeghbid@etu.umontpellier.fr
+Arame DIOP: arame.diop@etu.umontpellier.fr
+Amir IDRIGUENE: amir.idriguene@etu.umontpellier.fr
+Feyza KARADENIZ: feyza.karadeniz@etu.umontpellier.fr
